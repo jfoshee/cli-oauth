@@ -101,6 +101,7 @@ func (flow *Flow) AccessToken(c httpClient, tokenURL, clientSecret string) (*api
 type WaitOptions struct {
 	// ClientSecret is the app client secret value.
 	ClientSecret string
+	GrantType    string
 }
 
 // Wait blocks until the browser flow has completed and returns the access token.
@@ -119,7 +120,7 @@ func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts 
 			"client_secret": {opts.ClientSecret},
 			"code":          {code.Code},
 			"state":         {flow.state},
-			"grant_type":    {"client_credentials"},
+			"grant_type":    {opts.GrantType},
 		})
 	if err != nil {
 		return nil, err
