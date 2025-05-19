@@ -102,6 +102,7 @@ type WaitOptions struct {
 	// ClientSecret is the app client secret value.
 	ClientSecret string
 	GrantType    string
+	RedirectURI  string
 }
 
 // Wait blocks until the browser flow has completed and returns the access token.
@@ -119,7 +120,10 @@ func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts 
 		grantType = opts.GrantType
 	}
 
-	redirectURI := flow.server.CallbackPath
+	redirectURI := opts.RedirectURI
+	if redirectURI == "" {
+		redirectURI = fmt.Sprintf("http://%s:%d%s", "127.0.0.1", flow.server.Port(), flow.server.CallbackPath)
+	}
 
 	params := url.Values{
 		"client_id":     {flow.clientID},
