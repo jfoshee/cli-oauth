@@ -114,14 +114,23 @@ func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts 
 		return nil, errors.New("state mismatch")
 	}
 
-	resp, err := api.PostForm(c, tokenURL,
-		url.Values{
-			"client_id":     {flow.clientID},
-			"client_secret": {opts.ClientSecret},
-			"code":          {code.Code},
-			"state":         {flow.state},
-			"grant_type":    {opts.GrantType},
-		})
+	grantType := "authorization_code"
+	if opts.GrantType != "" {
+		grantType = opts.GrantType
+	}
+
+	redirectURI := flow.server.CallbackPath
+
+	params := url.Values{
+		"client_id":     {flow.clientID},
+		"client_secret": {opts.ClientSecret},
+		"code":          {code.Code},
+		"state":         {flow.state},
+		"grant_type":    {grantType},
+		"redirect_uri":  {redirectURI},
+	}
+	fmt.Printf("token request params: %+v\n", params)
+	resp, err := api.PostForm(c, tokenURL, params)
 	if err != nil {
 		return nil, err
 	}
