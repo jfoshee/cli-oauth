@@ -119,6 +119,7 @@ func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts 
 			"client_secret": {opts.ClientSecret},
 			"code":          {code.Code},
 			"state":         {flow.state},
+			"grant_type":    {"client_credentials"},
 		})
 	if err != nil {
 		return nil, err
