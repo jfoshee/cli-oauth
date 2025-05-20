@@ -1,27 +1,29 @@
 package api
 
-// AccessToken is an OAuth access token.
-type AccessToken struct {
-	// The token value, typically a 40-character random string.
-	Token string
-	// The refresh token value, associated with the access token.
+// TokenResponse represents the response from the token endpoint,
+// potentially including access, refresh, and identity tokens.
+type TokenResponse struct {
+	// AccessToken details.
+	AccessToken string
+	// RefreshToken for obtaining new access tokens.
 	RefreshToken string
-	// The token type, e.g. "bearer".
-	Type string
-	// Space-separated list of OAuth scopes that this token grants.
+	// TokenType, e.g., "bearer".
+	TokenType string
+	// Scope granted by the access token.
 	Scope string
+	// IDToken is the OpenID Connect ID token (a JWT) providing
+	// information about the authenticated user.
+	IDToken string
 }
 
-// AccessToken extracts the access token information from a server response.
-func (f FormResponse) AccessToken() (*AccessToken, error) {
-	if accessToken := f.Get("access_token"); accessToken != "" {
-		return &AccessToken{
-			Token:        accessToken,
-			RefreshToken: f.Get("refresh_token"),
-			Type:         f.Get("token_type"),
-			Scope:        f.Get("scope"),
-		}, nil
-	}
-
-	return nil, f.Err()
+// TokenResponse extracts the token information (including optional
+// ID token) from a FormResponse.
+func (f FormResponse) TokenResponse() (*TokenResponse, error) {
+	return &TokenResponse{
+		AccessToken:  f.Get("access_token"),
+		RefreshToken: f.Get("refresh_token"),
+		TokenType:    f.Get("token_type"),
+		Scope:        f.Get("scope"),
+		IDToken:      f.Get("id_token"),
+	}, f.Err()
 }

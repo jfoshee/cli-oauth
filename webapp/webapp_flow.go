@@ -90,10 +90,10 @@ func (flow *Flow) StartServer(writeSuccess func(io.Writer)) error {
 	return flow.server.Serve()
 }
 
-// AccessToken blocks until the browser flow has completed and returns the access token.
+// TokenResponse blocks until the browser flow has completed and returns the access token.
 //
 // Deprecated: use Wait.
-func (flow *Flow) AccessToken(c httpClient, tokenURL, clientSecret string) (*api.AccessToken, error) {
+func (flow *Flow) TokenResponse(c httpClient, tokenURL, clientSecret string) (*api.TokenResponse, error) {
 	return flow.Wait(context.Background(), c, tokenURL, WaitOptions{ClientSecret: clientSecret})
 }
 
@@ -105,8 +105,8 @@ type WaitOptions struct {
 	RedirectURI  string
 }
 
-// Wait blocks until the browser flow has completed and returns the access token.
-func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts WaitOptions) (*api.AccessToken, error) {
+// Wait blocks until the browser flow has completed and returns the token response.
+func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts WaitOptions) (*api.TokenResponse, error) {
 	code, err := flow.server.WaitForCode(ctx)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts 
 		return nil, err
 	}
 
-	return resp.AccessToken()
+	return resp.TokenResponse()
 }
 
 func randomString(length int) (string, error) {
