@@ -133,7 +133,6 @@ func (flow *Flow) Wait(ctx context.Context, c httpClient, tokenURL string, opts 
 		"grant_type":    {grantType},
 		"redirect_uri":  {redirectURI},
 	}
-	fmt.Printf("token request params: %+v\n", params)
 	resp, err := api.PostForm(c, tokenURL, params)
 	if err != nil {
 		return nil, err

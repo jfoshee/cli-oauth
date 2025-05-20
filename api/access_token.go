@@ -19,11 +19,19 @@ type TokenResponse struct {
 // TokenResponse extracts the token information (including optional
 // ID token) from a FormResponse.
 func (f FormResponse) TokenResponse() (*TokenResponse, error) {
+	accessToken := f.Get("access_token")
+	idToken := f.Get("id_token")
+
+	// TODO: Re-evaluate this. probably should check status code and idToken is not always present
+	if accessToken == "" { // && idToken == "" {
+		return nil, f.Err()
+	}
+
 	return &TokenResponse{
-		AccessToken:  f.Get("access_token"),
+		AccessToken:  accessToken,
 		RefreshToken: f.Get("refresh_token"),
 		TokenType:    f.Get("token_type"),
 		Scope:        f.Get("scope"),
-		IDToken:      f.Get("id_token"),
-	}, f.Err()
+		IDToken:      idToken,
+	}, nil
 }
